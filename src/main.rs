@@ -1,7 +1,7 @@
 extern crate azul;
 
 use azul::prelude::*;
-use azul::widgets::{label::Label, button::Button};
+use azul::widgets::{button::Button, label::Label};
 
 struct MyApplication {
     count: i32,
@@ -11,10 +11,12 @@ impl Layout for MyApplication {
     fn layout(&self, _info: WindowInfo<Self>) -> Dom<Self> {
         let label = Label::new(format!("Count: {}", self.count)).dom();
 
-        let increase_button = Button::with_label("Increase").dom()
+        let increase_button = Button::with_label("Increase")
+            .dom()
             .with_callback(On::MouseDown, Callback(increase_count));
 
-        let decrease_button = Button::with_label("Decrease").dom()
+        let decrease_button = Button::with_label("Decrease")
+            .dom()
             .with_callback(On::MouseDown, Callback(decrease_count));
 
         let button_container = Dom::new(NodeType::Div)
@@ -29,7 +31,7 @@ impl Layout for MyApplication {
 
 fn increase_count(
     state: &mut AppState<MyApplication>,
-    _event: WindowEvent<MyApplication>
+    _event: WindowEvent<MyApplication>,
 ) -> UpdateScreen {
     state.data.modify(|state| state.count += 1);
     UpdateScreen::Redraw
@@ -37,19 +39,16 @@ fn increase_count(
 
 fn decrease_count(
     state: &mut AppState<MyApplication>,
-    _event: WindowEvent<MyApplication>
+    _event: WindowEvent<MyApplication>,
 ) -> UpdateScreen {
     state.data.modify(|state| state.count -= 1);
     UpdateScreen::Redraw
 }
 
 fn main() {
-    let app = App::new(MyApplication { count: 0 }, AppConfig::default());
+    let window = Window::new(WindowCreateOptions::default(), css::native()).unwrap();
 
-    app.run(
-        Window::new(
-            WindowCreateOptions::default(),
-            css::native()
-        ).unwrap()
-    ).unwrap();
+    App::new(MyApplication { count: 0 }, AppConfig::default())
+        .run(window)
+        .unwrap();
 }
